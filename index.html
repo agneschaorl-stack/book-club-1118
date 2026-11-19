@@ -1,0 +1,2303 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>11.18 何不一起美好讀書會｜AI Agent 實作研習紀錄</title>
+  <meta name="description" content="2026年11月18日（週三）18:30–21:00「何不一起美好讀書會」活動紀錄。由益暉帶領同學們從本機 AI Agent 環境設定、資料夾位置確認到 GitHub 雲端同步，零程式基礎也能讓 AI 動手幫你做！" />
+  <link rel="canonical" href="https://agneschaorl-stack.github.io/book-club-1118/" />
+  <meta property="og:type" content="website" />
+  <meta property="og:locale" content="zh_TW" />
+  <meta property="og:site_name" content="何不一起美好讀書會" />
+  <meta property="og:url" content="https://agneschaorl-stack.github.io/book-club-1118/" />
+  <meta property="og:title" content="11.18 何不一起美好讀書會｜AI Agent 實作研習紀錄" />
+  <meta property="og:description" content="2026.11.18 讀書會實作紀錄：認真學習 AI Agent 方法，讓 AI 動手幫你做，現場實作紀實與全體合影。" />
+  <meta property="og:image" content="https://agneschaorl-stack.github.io/book-club-1118/og-preview.jpg" />
+  <meta property="og:image:type" content="image/jpeg" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:alt" content="11.18 何不一起美好讀書會全體同學大合照" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="11.18 何不一起美好讀書會｜AI Agent 實作研習紀錄" />
+  <meta name="twitter:description" content="2026.11.18 讀書會實作紀錄：認真學習 AI Agent 方法，讓 AI 動手幫你做，現場實作紀實與全體合影。" />
+  <meta name="twitter:image" content="https://agneschaorl-stack.github.io/book-club-1118/og-preview.jpg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;0,700;1,600;1,700&family=Noto+Serif+TC:wght@600;700;900&family=Noto+Sans+TC:wght@500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg-primary: #FAF8F5;
+      --bg-secondary: #F2EFE9;
+      --bg-card: #FFFFFF;
+      --bg-subtle: #F7F4EE;
+      --text-primary: #1A1E23;
+      --text-secondary: #3E454D;
+      --text-muted: #687078;
+      --accent-burgundy: #7C3E38;
+      --accent-burgundy-soft: #F6ECEB;
+      --accent-gold: #967244;
+      --accent-gold-soft: #F7F2EA;
+      --accent-slate: #355066;
+      --accent-slate-soft: #EBF0F4;
+      --accent-sage: #426350;
+      --border-hairline: rgba(26, 30, 35, 0.13);
+      --border-gold: rgba(150, 114, 68, 0.32);
+      --shadow-subtle: 0 8px 28px rgba(26, 30, 35, 0.05);
+      --shadow-elevated: 0 16px 40px rgba(26, 30, 35, 0.09);
+      --radius-lg: 16px;
+      --radius-md: 12px;
+      --radius-sm: 8px;
+      --radius-pill: 999px;
+      --font-serif: "Noto Serif TC", "Songti TC", "STSong", "Source Han Serif TC", Georgia, serif;
+      --font-en-serif: "Cormorant Garamond", "Noto Serif TC", Georgia, serif;
+      --font-sans: "Noto Sans TC", "PingFang TC", "Hiragino Sans CNS", "Microsoft JhengHei", -apple-system, sans-serif;
+      --font-mono: "SF Mono", "JetBrains Mono", Menlo, Consolas, monospace;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      background-color: var(--bg-primary);
+      color: var(--text-primary);
+      font-family: var(--font-sans);
+      font-weight: 500;
+      line-height: 1.8;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+
+    /* Top Sticky Refined Navigation */
+    .top-nav {
+      position: sticky;
+      top: 0;
+      z-index: 90;
+      background: rgba(250, 248, 245, 0.94);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--border-hairline);
+      padding: 0.85rem 1.5rem;
+    }
+
+    .nav-inner {
+      max-width: 1240px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      text-decoration: none;
+      color: var(--text-primary);
+    }
+
+    .brand-mark {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--accent-burgundy);
+      box-shadow: 0 0 0 3px var(--accent-burgundy-soft);
+    }
+
+    .brand-title {
+      font-family: var(--font-serif);
+      font-weight: 900;
+      font-size: 1.14rem;
+      letter-spacing: 0.04em;
+      color: var(--text-primary);
+    }
+
+    .brand-date {
+      font-family: var(--font-en-serif);
+      font-size: 0.95rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      color: var(--accent-gold);
+      padding: 0.1rem 0.65rem;
+      border-left: 1px solid var(--border-gold);
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 0.25rem;
+      flex-wrap: wrap;
+    }
+
+    .nav-links a {
+      text-decoration: none;
+      color: var(--text-secondary);
+      font-family: var(--font-serif);
+      font-size: 0.92rem;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      padding: 0.4rem 0.85rem;
+      border-radius: var(--radius-pill);
+      transition: all 0.2s ease;
+    }
+
+    .nav-links a:hover {
+      color: var(--accent-burgundy);
+      background: var(--accent-burgundy-soft);
+    }
+
+    /* Top-Right Compact Controls (Mode Toggle + French Chanson Button & Track Selector) */
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+
+    .mode-toggle-btn {
+      border: 1px solid var(--border-hairline);
+      background: var(--bg-card);
+      color: var(--text-primary);
+      font-family: var(--font-serif);
+      font-size: 0.85rem;
+      font-weight: 700;
+      padding: 0.42rem 0.92rem;
+      border-radius: var(--radius-pill);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.38rem;
+      transition: all 0.2s ease;
+    }
+
+    .mode-toggle-btn:hover {
+      border-color: var(--accent-gold);
+      color: var(--accent-gold);
+    }
+
+    .mode-toggle-btn.active {
+      background: var(--accent-slate);
+      color: #FFF;
+      border-color: var(--accent-slate);
+    }
+
+    .nav-music-group {
+      display: inline-flex;
+      align-items: center;
+      background: var(--bg-card);
+      border: 1px solid var(--border-gold);
+      border-radius: var(--radius-pill);
+      padding: 0.14rem 0.22rem 0.14rem 0.18rem;
+      box-shadow: 0 2px 10px rgba(124, 62, 56, 0.07);
+      gap: 0.25rem;
+    }
+
+    .music-nav-btn {
+      border: none;
+      background: var(--accent-burgundy-soft);
+      color: var(--accent-burgundy);
+      font-family: var(--font-serif);
+      font-size: 0.84rem;
+      font-weight: 700;
+      padding: 0.32rem 0.85rem;
+      border-radius: var(--radius-pill);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.42rem;
+      transition: all 0.2s ease;
+    }
+
+    .music-nav-btn:hover {
+      background: var(--accent-burgundy);
+      color: #FFFFFF;
+    }
+
+    .music-nav-btn.playing {
+      background: var(--accent-burgundy);
+      color: #FFFFFF;
+    }
+
+    .nav-track-select {
+      border: none;
+      background: transparent;
+      color: var(--text-secondary);
+      font-family: var(--font-serif);
+      font-size: 0.8rem;
+      font-weight: 700;
+      padding: 0.24rem 0.45rem 0.24rem 0.2rem;
+      border-radius: var(--radius-pill);
+      cursor: pointer;
+      outline: none;
+      max-width: 155px;
+    }
+
+    .eq-bars {
+      display: inline-flex;
+      align-items: flex-end;
+      gap: 2px;
+      height: 11px;
+    }
+
+    .eq-bar {
+      width: 2px;
+      background: currentColor;
+      border-radius: 1px;
+      height: 3px;
+    }
+
+    .music-nav-btn.playing .eq-bar:nth-child(1) {
+      animation: eqBounce 0.8s infinite ease-in-out;
+    }
+    .music-nav-btn.playing .eq-bar:nth-child(2) {
+      animation: eqBounce 0.6s infinite ease-in-out 0.15s;
+    }
+    .music-nav-btn.playing .eq-bar:nth-child(3) {
+      animation: eqBounce 0.9s infinite ease-in-out 0.3s;
+    }
+
+    @keyframes eqBounce {
+      0%, 100% { height: 3px; }
+      50% { height: 11px; }
+    }
+
+    /* =====================================================
+       REFINED EDITORIAL HERO SECTION (Bright, Airy, Classic)
+       ===================================================== */
+    .hero {
+      max-width: 1240px;
+      margin: 2rem auto 2.5rem;
+      padding: 0 1.5rem;
+    }
+
+    .hero-bright-shell {
+      position: relative;
+      background: var(--bg-card);
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border-hairline);
+      box-shadow: var(--shadow-subtle);
+      padding: 2.6rem 2.8rem;
+    }
+
+    .hero-bright-shell::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 2.8rem;
+      right: 2.8rem;
+      height: 3px;
+      background: linear-gradient(90deg, var(--accent-burgundy), var(--accent-gold), var(--accent-slate));
+      border-radius: 0 0 3px 3px;
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 0.92fr 1.25fr;
+      gap: 2.4rem;
+      align-items: center;
+    }
+
+    .hero-copy {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    .hero-badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-bottom: 1.1rem;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      padding: 0.3rem 0.88rem;
+      border-radius: var(--radius-pill);
+      font-family: var(--font-serif);
+      font-size: 0.82rem;
+      font-weight: 700;
+      letter-spacing: 0.03em;
+    }
+
+    .hero-badge.primary {
+      background: var(--accent-burgundy-soft);
+      color: var(--accent-burgundy);
+      border: 1px solid rgba(124, 62, 56, 0.24);
+    }
+
+    .hero-badge.secondary {
+      background: var(--accent-gold-soft);
+      color: #6E512C;
+      border: 1px solid var(--border-gold);
+    }
+
+    .hero-badge.slate {
+      background: var(--accent-slate-soft);
+      color: var(--accent-slate);
+    }
+
+    .hero-kicker {
+      font-family: var(--font-en-serif);
+      font-style: italic;
+      font-size: 1.08rem;
+      font-weight: 700;
+      color: var(--accent-gold);
+      letter-spacing: 0.06em;
+      margin-bottom: 0.3rem;
+    }
+
+    .hero-title {
+      font-family: var(--font-serif);
+      font-size: clamp(1.95rem, 3.1vw, 2.7rem);
+      font-weight: 900;
+      line-height: 1.34;
+      color: var(--text-primary);
+      margin-bottom: 1.05rem;
+      letter-spacing: 0.02em;
+    }
+
+    .hero-title .highlight-underline {
+      color: var(--accent-burgundy);
+      border-bottom: 2.5px solid var(--border-gold);
+      padding-bottom: 2px;
+    }
+
+    .hero-subtitle {
+      font-size: 1.02rem;
+      font-weight: 500;
+      color: var(--text-secondary);
+      margin-bottom: 1.5rem;
+      line-height: 1.85;
+    }
+
+    /* Event Date, Time & Tools Metadata Table inside Hero */
+    .hero-meta-grid {
+      width: 100%;
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 0.9rem 1.2rem;
+      background: var(--bg-subtle);
+      border: 1px solid var(--border-hairline);
+      padding: 1.15rem 1.35rem;
+      border-radius: var(--radius-md);
+    }
+
+    .meta-item {
+      display: flex;
+      flex-direction: column;
+      gap: 0.15rem;
+    }
+
+    .meta-item.full-row {
+      grid-column: span 2;
+      padding-top: 0.45rem;
+      border-top: 1px dashed var(--border-hairline);
+    }
+
+    .meta-label {
+      font-family: var(--font-en-serif);
+      font-size: 0.8rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--accent-gold);
+    }
+
+    .meta-value {
+      font-family: var(--font-serif);
+      font-size: 0.96rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      display: flex;
+      align-items: center;
+      gap: 0.45rem;
+    }
+
+    .meta-value .accent-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--accent-burgundy);
+      display: inline-block;
+      flex-shrink: 0;
+    }
+
+    /* Enlarged Right Side Hero Visual Showcase */
+    .hero-visual {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      gap: 0.85rem;
+    }
+
+    .hero-main-photo-wrap {
+      position: relative;
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      border: 1px solid var(--border-hairline);
+      box-shadow: var(--shadow-elevated);
+      cursor: zoom-in;
+      background: var(--bg-secondary);
+    }
+
+    .hero-main-photo-wrap img {
+      width: 100%;
+      height: auto;
+      display: block;
+      image-orientation: from-image;
+      transition: transform 0.6s ease;
+    }
+
+    .hero-main-photo-wrap:hover img {
+      transform: scale(1.02);
+    }
+
+    .hero-photo-caption-bar {
+      background: #FFFFFF;
+      padding: 0.82rem 1.2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-family: var(--font-serif);
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      border-top: 1px solid var(--border-hairline);
+    }
+
+    .hero-floating-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      justify-content: center;
+    }
+
+    .hero-chip {
+      background: var(--bg-card);
+      border: 1px solid var(--border-hairline);
+      padding: 0.32rem 0.88rem;
+      border-radius: var(--radius-pill);
+      font-family: var(--font-serif);
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: var(--text-secondary);
+    }
+
+    /* Container & Section Headers */
+    .container {
+      max-width: 1240px;
+      margin: 0 auto;
+      padding: 0 1.5rem;
+    }
+
+    .section {
+      padding: 3.2rem 0;
+    }
+
+    .section-header {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.45rem;
+      margin-bottom: 2.1rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid var(--border-hairline);
+    }
+
+    .section-eyebrow {
+      font-family: var(--font-en-serif);
+      font-style: italic;
+      font-size: 1rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      color: var(--accent-gold);
+    }
+
+    .section-title {
+      font-family: var(--font-serif);
+      font-size: clamp(1.68rem, 2.5vw, 2.18rem);
+      color: var(--text-primary);
+      font-weight: 900;
+      line-height: 1.35;
+      letter-spacing: 0.02em;
+    }
+
+    .section-desc {
+      font-size: 1rem;
+      font-weight: 500;
+      color: var(--text-secondary);
+      max-width: 820px;
+    }
+
+    /* Vibe & Quick Highlights Strip */
+    .vibe-strip {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(255px, 1fr));
+      gap: 1.25rem;
+      margin-bottom: 1.75rem;
+    }
+
+    .vibe-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-hairline);
+      border-radius: var(--radius-md);
+      padding: 1.5rem 1.55rem;
+      box-shadow: var(--shadow-subtle);
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      position: relative;
+      transition: transform 0.25s ease, box-shadow 0.25s ease;
+    }
+
+    .vibe-card:hover {
+      transform: translateY(-3px);
+      box-shadow: var(--shadow-elevated);
+    }
+
+    .vibe-card::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 3px;
+      border-radius: var(--radius-md) var(--radius-md) 0 0;
+    }
+    .vibe-card.c1::before { background: var(--accent-burgundy); }
+    .vibe-card.c2::before { background: var(--accent-gold); }
+    .vibe-card.c3::before { background: var(--accent-slate); }
+    .vibe-card.c4::before { background: var(--accent-sage); }
+
+    .vibe-num {
+      font-family: var(--font-en-serif);
+      font-style: italic;
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--accent-gold);
+    }
+
+    .vibe-title {
+      font-family: var(--font-serif);
+      font-size: 1.14rem;
+      font-weight: 900;
+      color: var(--text-primary);
+    }
+
+    .vibe-text {
+      font-size: 0.94rem;
+      font-weight: 500;
+      color: var(--text-secondary);
+      line-height: 1.75;
+    }
+
+    /* 3 Interactive Deep-Dive Guide Buttons Bar */
+    .guide-bar {
+      background: var(--bg-subtle);
+      border: 1px solid var(--border-gold);
+      border-radius: var(--radius-md);
+      padding: 1.35rem 1.65rem;
+      margin-bottom: 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .guide-bar-info {
+      display: flex;
+      flex-direction: column;
+      gap: 0.15rem;
+    }
+
+    .guide-bar-title {
+      font-family: var(--font-serif);
+      font-weight: 900;
+      font-size: 1.08rem;
+      color: var(--text-primary);
+    }
+
+    .guide-bar-sub {
+      font-size: 0.88rem;
+      font-weight: 500;
+      color: var(--text-secondary);
+    }
+
+    .guide-buttons {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.6rem;
+    }
+
+    .guide-pill {
+      border: 1px solid var(--border-hairline);
+      background: var(--bg-card);
+      color: var(--text-primary);
+      font-family: var(--font-serif);
+      font-size: 0.9rem;
+      font-weight: 700;
+      padding: 0.52rem 1.12rem;
+      border-radius: var(--radius-pill);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      transition: all 0.2s ease;
+    }
+
+    .guide-pill:hover {
+      background: var(--accent-burgundy);
+      color: #FFF;
+      border-color: var(--accent-burgundy);
+    }
+
+    /* Learning Map Section (Highlighting IMG_8869 + 5 Core Steps) */
+    .map-showcase {
+      display: grid;
+      grid-template-columns: 1.02fr 1.28fr;
+      gap: 2.2rem;
+      align-items: start;
+      background: var(--bg-card);
+      border-radius: var(--radius-lg);
+      padding: 2.1rem;
+      border: 1px solid var(--border-hairline);
+      box-shadow: var(--shadow-subtle);
+    }
+
+    .map-poster-box {
+      position: relative;
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      border: 1px solid var(--border-hairline);
+      background: var(--bg-secondary);
+      cursor: zoom-in;
+    }
+
+    .map-poster-box img {
+      width: 100%;
+      height: auto;
+      display: block;
+      image-orientation: from-image;
+      transition: transform 0.4s ease;
+    }
+
+    .map-poster-box:hover img {
+      transform: scale(1.015);
+    }
+
+    .map-poster-caption {
+      padding: 0.82rem 1.1rem;
+      background: var(--bg-subtle);
+      font-family: var(--font-serif);
+      font-size: 0.86rem;
+      font-weight: 700;
+      color: var(--text-secondary);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-top: 1px solid var(--border-hairline);
+    }
+
+    .map-details {
+      display: flex;
+      flex-direction: column;
+      gap: 1.2rem;
+    }
+
+    .prep-box {
+      background: var(--accent-gold-soft);
+      border: 1px solid var(--border-gold);
+      border-radius: var(--radius-md);
+      padding: 1.2rem 1.4rem;
+    }
+
+    .prep-box h3 {
+      font-family: var(--font-serif);
+      font-weight: 900;
+      font-size: 1.06rem;
+      color: #5C4222;
+      margin-bottom: 0.6rem;
+    }
+
+    .prep-list {
+      list-style: none;
+      display: grid;
+      gap: 0.5rem;
+    }
+
+    .prep-list li {
+      font-size: 0.93rem;
+      font-weight: 500;
+      color: #42311A;
+      line-height: 1.7;
+    }
+
+    .steps-timeline {
+      display: flex;
+      flex-direction: column;
+      gap: 0.85rem;
+    }
+
+    .step-item {
+      background: var(--bg-primary);
+      border: 1px solid var(--border-hairline);
+      border-radius: var(--radius-md);
+      padding: 1.02rem 1.25rem;
+      display: flex;
+      gap: 1rem;
+      align-items: flex-start;
+      transition: border-color 0.2s ease;
+    }
+
+    .step-item:hover {
+      border-color: var(--accent-gold);
+    }
+
+    .step-num {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      background: var(--accent-burgundy);
+      color: #FFF;
+      font-family: var(--font-en-serif);
+      font-weight: 700;
+      font-size: 0.96rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      margin-top: 0.15rem;
+    }
+
+    .step-body h4 {
+      font-family: var(--font-serif);
+      font-weight: 900;
+      font-size: 1.04rem;
+      color: var(--text-primary);
+      margin-bottom: 0.24rem;
+    }
+
+    .step-body p {
+      font-size: 0.93rem;
+      font-weight: 500;
+      color: var(--text-secondary);
+      line-height: 1.74;
+    }
+
+    .step-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+      margin-top: 0.48rem;
+    }
+
+    .step-tag {
+      font-family: var(--font-mono);
+      font-size: 0.76rem;
+      font-weight: 600;
+      background: var(--bg-card);
+      border: 1px solid var(--border-hairline);
+      padding: 0.14rem 0.58rem;
+      border-radius: 4px;
+      color: var(--accent-slate);
+    }
+
+    /* Life Applications Grid */
+    .life-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 1.25rem;
+    }
+
+    .life-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-hairline);
+      border-radius: var(--radius-md);
+      padding: 1.5rem;
+      box-shadow: var(--shadow-subtle);
+      display: flex;
+      flex-direction: column;
+      gap: 0.55rem;
+    }
+
+    .life-tag {
+      align-self: flex-start;
+      font-family: var(--font-serif);
+      font-size: 0.78rem;
+      font-weight: 700;
+      padding: 0.2rem 0.7rem;
+      border-radius: var(--radius-pill);
+      background: var(--accent-slate-soft);
+      color: var(--accent-slate);
+    }
+
+    .life-card h3 {
+      font-family: var(--font-serif);
+      font-weight: 900;
+      font-size: 1.14rem;
+      color: var(--text-primary);
+    }
+
+    .life-card p {
+      font-size: 0.94rem;
+      font-weight: 500;
+      color: var(--text-secondary);
+      line-height: 1.75;
+    }
+
+    /* =====================================================
+       PHOTO GALLERY GRID & SPEAKER SPOTLIGHT
+       ===================================================== */
+    .chapter-block {
+      margin-bottom: 3.5rem;
+    }
+
+    .chapter-head {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      margin-bottom: 1.4rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 1px solid var(--border-hairline);
+    }
+
+    .chapter-title-wrap {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .chapter-number {
+      font-family: var(--font-en-serif);
+      font-size: 0.9rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      color: var(--accent-burgundy);
+      background: var(--accent-burgundy-soft);
+      padding: 0.2rem 0.72rem;
+      border-radius: var(--radius-pill);
+      border: 1px solid rgba(124, 62, 56, 0.22);
+    }
+
+    .chapter-title {
+      font-family: var(--font-serif);
+      font-size: 1.44rem;
+      font-weight: 900;
+      color: var(--text-primary);
+    }
+
+    .chapter-time {
+      font-family: var(--font-mono);
+      font-size: 0.84rem;
+      font-weight: 600;
+      color: var(--text-muted);
+    }
+
+    .photo-grid {
+      display: grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap: 1.35rem;
+      align-items: stretch;
+    }
+
+    .photo-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-hairline);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      box-shadow: var(--shadow-subtle);
+      transition: transform 0.25s ease, box-shadow 0.25s ease;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .photo-card:hover {
+      transform: translateY(-3px);
+      box-shadow: var(--shadow-elevated);
+    }
+
+    .photo-card.span-12 { grid-column: span 12; }
+    .photo-card.span-8 { grid-column: span 8; }
+    .photo-card.span-7 { grid-column: span 7; }
+    .photo-card.span-6 { grid-column: span 6; }
+    .photo-card.span-5 { grid-column: span 5; }
+    .photo-card.span-4 { grid-column: span 4; }
+
+    /* Featured Speaker Pair Cards (Balanced side-by-side span-6) */
+    .photo-card.featured-instructor {
+      border: 1px solid var(--border-gold);
+    }
+
+    .photo-card.featured-instructor .photo-frame {
+      aspect-ratio: 5 / 4;
+    }
+
+    .photo-card.featured-instructor .photo-frame img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center 20%;
+    }
+
+    .photo-frame {
+      position: relative;
+      width: 100%;
+      background: var(--bg-secondary);
+      overflow: hidden;
+      cursor: zoom-in;
+    }
+
+    .photo-frame img {
+      width: 100%;
+      height: auto;
+      display: block;
+      image-orientation: from-image;
+      transition: transform 0.5s ease;
+    }
+
+    /* Compact uniform height for the 3 small cards row */
+    .photo-card.compact-card .photo-frame {
+      aspect-ratio: 4 / 3;
+    }
+    .photo-card.compact-card .photo-frame img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center 25%;
+    }
+
+    .photo-card:hover .photo-frame img {
+      transform: scale(1.02);
+    }
+
+    .photo-time-pill {
+      position: absolute;
+      top: 0.8rem;
+      right: 0.8rem;
+      background: rgba(255, 255, 255, 0.94);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      color: var(--text-primary);
+      font-family: var(--font-mono);
+      font-weight: 700;
+      font-size: 0.75rem;
+      padding: 0.2rem 0.62rem;
+      border-radius: var(--radius-pill);
+      border: 1px solid var(--border-hairline);
+    }
+
+    .photo-badge-spotlight {
+      position: absolute;
+      top: 0.8rem;
+      left: 0.8rem;
+      background: rgba(26, 30, 35, 0.86);
+      backdrop-filter: blur(6px);
+      color: #FFFFFF;
+      font-family: var(--font-serif);
+      font-weight: 700;
+      font-size: 0.78rem;
+      letter-spacing: 0.03em;
+      padding: 0.24rem 0.78rem;
+      border-radius: var(--radius-pill);
+    }
+
+    .photo-caption-box {
+      padding: 1.25rem 1.4rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.45rem;
+      flex: 1;
+    }
+
+    .photo-kicker {
+      font-family: var(--font-en-serif);
+      font-style: italic;
+      font-size: 0.88rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      color: var(--accent-gold);
+    }
+
+    .photo-heading {
+      font-family: var(--font-serif);
+      font-size: 1.14rem;
+      font-weight: 900;
+      color: var(--text-primary);
+      line-height: 1.42;
+    }
+
+    .photo-card.featured-instructor .photo-heading {
+      font-size: 1.2rem;
+    }
+
+    .photo-desc {
+      font-size: 0.94rem;
+      font-weight: 500;
+      color: var(--text-secondary);
+      line-height: 1.78;
+    }
+
+    .photo-note {
+      margin-top: 0.35rem;
+      padding: 0.62rem 0.92rem;
+      background: var(--bg-subtle);
+      border-left: 2.5px solid var(--accent-gold);
+      font-size: 0.87rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+    }
+
+    /* Pure Gallery Mode toggle effect */
+    body.pure-gallery-mode .photo-caption-box {
+      display: none;
+    }
+    body.pure-gallery-mode .photo-card.span-7,
+    body.pure-gallery-mode .photo-card.span-5,
+    body.pure-gallery-mode .photo-card.span-6 {
+      grid-column: span 4;
+    }
+
+    /* =====================================================
+       REFINED GRATITUDE / APPRECIATION SECTION
+       ===================================================== */
+    .gratitude-section {
+      margin: 1rem 0 3.5rem;
+    }
+
+    .gratitude-card {
+      position: relative;
+      background: var(--bg-card);
+      border: 1px solid var(--border-gold);
+      border-radius: var(--radius-lg);
+      padding: 2.8rem 2.6rem;
+      box-shadow: var(--shadow-subtle);
+      text-align: center;
+    }
+
+    .gratitude-eyebrow {
+      display: inline-block;
+      font-family: var(--font-en-serif);
+      font-style: italic;
+      font-size: 1.02rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      color: var(--accent-gold);
+      margin-bottom: 0.65rem;
+    }
+
+    .gratitude-title {
+      font-family: var(--font-serif);
+      font-size: clamp(1.58rem, 2.5vw, 2.08rem);
+      font-weight: 900;
+      color: var(--text-primary);
+      margin-bottom: 1.1rem;
+      line-height: 1.4;
+    }
+
+    .gratitude-message {
+      max-width: 780px;
+      margin: 0 auto 1.5rem;
+      font-size: 1rem;
+      font-weight: 500;
+      color: var(--text-secondary);
+      line-height: 1.9;
+    }
+
+    .gratitude-message strong {
+      color: var(--accent-burgundy);
+      font-weight: 700;
+    }
+
+    .gratitude-pills {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 0.65rem;
+    }
+
+    .gratitude-pill {
+      background: var(--bg-subtle);
+      border: 1px solid var(--border-gold);
+      color: var(--text-primary);
+      font-family: var(--font-serif);
+      font-weight: 700;
+      font-size: 0.88rem;
+      padding: 0.44rem 1.12rem;
+      border-radius: var(--radius-pill);
+    }
+
+    /* Modal for 3 Deep-Dive Interactive Guides */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      z-index: 120;
+      background: rgba(20, 24, 28, 0.55);
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+    }
+
+    .modal-backdrop.open {
+      display: flex;
+    }
+
+    .modal-card {
+      background: var(--bg-card);
+      border-radius: var(--radius-lg);
+      max-width: 660px;
+      width: 100%;
+      padding: 2.1rem;
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.2);
+      border: 1px solid var(--border-hairline);
+      position: relative;
+      animation: modalSlide 0.22s ease;
+    }
+
+    @keyframes modalSlide {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .modal-close {
+      position: absolute;
+      top: 1.2rem;
+      right: 1.2rem;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      border: 1px solid var(--border-hairline);
+      background: var(--bg-primary);
+      cursor: pointer;
+      font-size: 0.95rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal-tabs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-bottom: 1.3rem;
+      padding-right: 2rem;
+    }
+
+    .modal-tab {
+      border: 1px solid var(--border-hairline);
+      background: var(--bg-primary);
+      color: var(--text-secondary);
+      padding: 0.4rem 0.92rem;
+      border-radius: var(--radius-pill);
+      font-family: var(--font-serif);
+      font-size: 0.85rem;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .modal-tab.active {
+      background: var(--accent-burgundy);
+      color: #FFF;
+      border-color: var(--accent-burgundy);
+    }
+
+    .modal-title {
+      font-family: var(--font-serif);
+      font-weight: 900;
+      font-size: 1.4rem;
+      margin-bottom: 0.6rem;
+      color: var(--text-primary);
+    }
+
+    .modal-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.45rem;
+      margin-bottom: 1rem;
+    }
+
+    .modal-chip {
+      font-family: var(--font-serif);
+      font-size: 0.78rem;
+      font-weight: 700;
+      padding: 0.2rem 0.7rem;
+      border-radius: var(--radius-pill);
+      background: var(--accent-gold-soft);
+      color: #634826;
+      border: 1px solid var(--border-gold);
+    }
+
+    .modal-body {
+      font-size: 0.96rem;
+      font-weight: 500;
+      color: var(--text-secondary);
+      line-height: 1.82;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    /* Fullscreen Lightbox */
+    .lightbox {
+      position: fixed;
+      inset: 0;
+      z-index: 150;
+      background: rgba(15, 18, 22, 0.92);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+    }
+
+    .lightbox.open {
+      display: flex;
+    }
+
+    .lightbox-img-wrap {
+      max-width: 92vw;
+      max-height: 76vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .lightbox-img-wrap img {
+      max-width: 92vw;
+      max-height: 76vh;
+      width: auto;
+      height: auto;
+      object-fit: contain;
+      border-radius: 8px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+      image-orientation: from-image;
+    }
+
+    .lightbox-caption {
+      margin-top: 1rem;
+      max-width: 720px;
+      text-align: center;
+      color: #F1F3F5;
+    }
+
+    .lightbox-caption h4 {
+      font-family: var(--font-serif);
+      font-weight: 900;
+      font-size: 1.14rem;
+      margin-bottom: 0.25rem;
+    }
+
+    .lightbox-caption p {
+      font-size: 0.92rem;
+      font-weight: 500;
+      color: rgba(255, 255, 255, 0.82);
+    }
+
+    .lightbox-nav {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      border: 1px solid rgba(255,255,255,0.22);
+      background: rgba(255,255,255,0.1);
+      color: #FFF;
+      font-size: 1.15rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .lightbox-nav.prev { left: 1.5rem; }
+    .lightbox-nav.next { right: 1.5rem; }
+    .lightbox-close {
+      position: absolute;
+      top: 1.5rem;
+      right: 1.5rem;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      border: 1px solid rgba(255,255,255,0.22);
+      background: rgba(255,255,255,0.1);
+      color: #FFF;
+      font-size: 1.05rem;
+      cursor: pointer;
+    }
+
+    /* Footer */
+    footer {
+      background: #1A1E23;
+      color: rgba(255, 255, 255, 0.86);
+      padding: 2.8rem 1.5rem 3.4rem;
+      margin-top: 2rem;
+    }
+
+    .footer-inner {
+      max-width: 1240px;
+      margin: 0 auto;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1.5rem;
+    }
+
+    .footer-brand h3 {
+      font-family: var(--font-serif);
+      font-weight: 900;
+      font-size: 1.16rem;
+      color: #FFF;
+      margin-bottom: 0.3rem;
+    }
+
+    .footer-brand p {
+      font-size: 0.9rem;
+      font-weight: 500;
+      color: rgba(255, 255, 255, 0.7);
+    }
+
+    .footer-meta {
+      font-size: 0.86rem;
+      font-weight: 500;
+      color: rgba(255, 255, 255, 0.7);
+      text-align: right;
+    }
+
+    @media (max-width: 980px) {
+      .hero-grid {
+        grid-template-columns: 1fr;
+      }
+      .map-showcase {
+        grid-template-columns: 1fr;
+      }
+      .photo-card.span-7,
+      .photo-card.span-6,
+      .photo-card.span-5,
+      .photo-card.span-4 {
+        grid-column: span 12;
+      }
+      body.pure-gallery-mode .photo-card.span-7,
+      body.pure-gallery-mode .photo-card.span-5,
+      body.pure-gallery-mode .photo-card.span-6 {
+        grid-column: span 6;
+      }
+      .hero-bright-shell {
+        padding: 1.8rem;
+      }
+    }
+
+    @media (max-width: 600px) {
+      .hero-meta-grid {
+        grid-template-columns: 1fr;
+      }
+      .meta-item.full-row {
+        grid-column: span 1;
+      }
+      body.pure-gallery-mode .photo-card.span-7,
+      body.pure-gallery-mode .photo-card.span-5,
+      body.pure-gallery-mode .photo-card.span-6 {
+        grid-column: span 12;
+      }
+      .gratitude-card {
+        padding: 2rem 1.4rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Sticky Navigation with Top-Right Compact Music Control -->
+  <nav class="top-nav" aria-label="主導覽列">
+    <div class="nav-inner">
+      <a href="#top" class="brand">
+        <span class="brand-mark" aria-hidden="true"></span>
+        <span class="brand-title">11.18 何不一起美好讀書會</span>
+        <span class="brand-date">2026.11.18 WED</span>
+      </a>
+
+      <div class="nav-links">
+        <a href="#highlights">課程重點</a>
+        <a href="#roadmap">學習地圖</a>
+        <a href="#gallery">實作紀實</a>
+        <a href="#group">活動合影</a>
+        <a href="#gratitude">誠摯致謝</a>
+      </div>
+
+      <div class="nav-actions">
+        <button type="button" id="modeToggleBtn" class="mode-toggle-btn" title="切換圖文雅覽與純圖畫廊模式">
+          <span>📖</span> <span id="modeToggleLabel">圖文雅覽</span>
+        </button>
+        <div class="nav-music-group" aria-label="法國香頌音樂控制">
+          <button type="button" id="navMusicBtn" class="music-nav-btn" aria-label="播放或暫停法國香頌音樂">
+            <span class="eq-bars" aria-hidden="true">
+              <span class="eq-bar"></span>
+              <span class="eq-bar"></span>
+              <span class="eq-bar"></span>
+            </span>
+            <span id="navMusicLabel">🎵 法國香頌</span>
+          </button>
+          <select id="musicTrackSelect" class="nav-track-select" aria-label="切換法國香頌曲目" title="選擇法國香頌曲目">
+            <option value="0">薩蒂・巴黎香頌圓舞曲</option>
+            <option value="1">1925 巴黎原版香頌錄音</option>
+            <option value="2">佛瑞・法式大提琴與鋼琴</option>
+            <option value="3">薩蒂・左岸靜謐鋼琴</option>
+          </select>
+        </div>
+        <audio id="bgAudioPlayer" preload="auto" loop crossorigin="anonymous"></audio>
+      </div>
+    </div>
+  </nav>
+
+  <!-- REFINED EDITORIAL HERO SECTION -->
+  <header id="top" class="hero">
+    <div class="hero-bright-shell">
+      <div class="hero-grid">
+        <!-- Left Column: Refined Editorial Typography -->
+        <div class="hero-copy">
+          <div class="hero-badges">
+            <span class="hero-badge primary">何不一起美好讀書會</span>
+            <span class="hero-badge secondary">零程式基礎實作</span>
+            <span class="hero-badge slate">AI Agent 日常應用</span>
+          </div>
+
+          <div class="hero-kicker">AI Agent Workshop &amp; Reading Club</div>
+          <h1 class="hero-title">
+            學習 <span class="highlight-underline">AI Agent</span> 方法，<br />讓 AI 動手幫你做
+          </h1>
+          <p class="hero-subtitle">
+            無須程式設計背景，透過清晰的自然語言指令與結構化的資料夾管理，即可引導本機 AI Agent 整理素材、生成網頁並完成雲端發布。一場兼顧實用方法與實作樂趣的晚間研習紀錄。
+          </p>
+
+          <div class="hero-meta-grid" aria-label="活動日期時間與工具資訊">
+            <div class="meta-item">
+              <span class="meta-label">Date ・ 活動日期</span>
+              <span class="meta-value"><span class="accent-dot"></span>2026 年 11 月 18 日（週三）</span>
+            </div>
+            <div class="meta-item">
+              <span class="meta-label">Time ・ 活動時間</span>
+              <span class="meta-value"><span class="accent-dot"></span>18:30 – 21:00</span>
+            </div>
+            <div class="meta-item full-row">
+              <span class="meta-label">Core Tools ・ 核心實作工具</span>
+              <span class="meta-value"><span class="accent-dot"></span>Claude Code・ChatGPT / Codex・Google Antigravity</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Column: Enlarged Group Photo Card -->
+        <div class="hero-visual">
+          <div class="hero-main-photo-wrap" data-lightbox-index="5" title="點擊放大檢視大合照">
+            <img src="IMG_8860.jpeg" alt="11.18 何不一起美好讀書會全體同學大合照" />
+            <div class="hero-photo-caption-bar">
+              <span>📸 何不一起美好讀書會・同學們收穫滿滿</span>
+              <span style="color: var(--accent-burgundy);">點擊放大檢視 ↗</span>
+            </div>
+          </div>
+          <div class="hero-floating-tags">
+            <span class="hero-chip">工作資料夾位置確認</span>
+            <span class="hero-chip">三大 AI Agent 工具評比</span>
+            <span class="hero-chip">GitHub 與 Google 雲端同步</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+
+    <!-- Section 1: Core Highlights + 3 Interactive Deep-Dive Buttons -->
+    <section id="highlights" class="section">
+      <div class="section-header">
+        <span class="section-eyebrow">01 / Course Essence</span>
+        <h2 class="section-title">課程核心要點：從概念理解到動手實作</h2>
+        <p class="section-desc">
+          本次讀書會聚焦於本機端 AI Agent 的實際操作。透過系統化的教材引導，讓同學們理解如何讓 AI 直接讀取電腦中的文字與影像檔案，協助完成日常資料整理與網頁製作。
+        </p>
+      </div>
+
+      <div class="vibe-strip">
+        <article class="vibe-card c1">
+          <span class="vibe-num">Point 01</span>
+          <h3 class="vibe-title">零程式基礎即可上手</h3>
+          <p class="vibe-text">免除繁複的語法記憶，學習以條理分明的文字敘述交代任務背景與需求，交由 AI Agent 自動建立 `index.html` 與專案架構。</p>
+        </article>
+        <article class="vibe-card c2">
+          <span class="vibe-num">Point 02</span>
+          <h3 class="vibe-title">三大主流工具客觀評比</h3>
+          <p class="vibe-text">針對 Claude Code、ChatGPT/Codex 與 Google Antigravity，從「功能特性與優缺點」及「訂閱費用與周邊生態」兩大維度深入剖析。</p>
+        </article>
+        <article class="vibe-card c3">
+          <span class="vibe-num">Point 03</span>
+          <h3 class="vibe-title">個人素材轉化為質感網頁</h3>
+          <p class="vibe-text">將預先準備的旅遊照片、閱讀筆記或生活紀錄放入專屬資料夾，透過多輪對話逐步微調版面細節，產出第一支個人網頁作品。</p>
+        </article>
+        <article class="vibe-card c4">
+          <span class="vibe-num">Point 04</span>
+          <h3 class="vibe-title">版本控制與雲端硬碟串接</h3>
+          <p class="vibe-text">建立 GitHub 版本控制觀念以妥善保存修改歷程，並配合 Google 雲端硬碟同步圖片與文字素材，實現跨裝置管理與線上發布。</p>
+        </article>
+      </div>
+
+      <!-- 3 Interactive Guide Buttons -->
+      <div class="guide-bar">
+        <div class="guide-bar-info">
+          <div class="guide-bar-title">讀書會三大主題導覽</div>
+          <div class="guide-bar-sub">點擊下方按鈕，檢視本次研習的課程設計脈絡、實作環境與現場交流紀要</div>
+        </div>
+        <div class="guide-buttons">
+          <button type="button" class="guide-pill" data-guide="origin">📜 課程緣起與實作心法</button>
+          <button type="button" class="guide-pill" data-guide="venue">💻 數位環境與學習動線</button>
+          <button type="button" class="guide-pill" data-guide="atmosphere">🤝 課堂交流與研習氛圍</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 2: Illustrated Roadmap (Grounded in IMG_8869.jpeg & Projector Slides) -->
+    <section id="roadmap" class="section">
+      <div class="section-header">
+        <span class="section-eyebrow">02 / Learning Roadmap</span>
+        <h2 class="section-title">五大核心實作學習地圖</h2>
+        <p class="section-desc">
+          結合課堂手繪視覺指南與投影布幕上的《AI 實作教室》七大單元（學習路徑、安裝工具、工具比較、能力與額度、真正開始、指令小抄、佳作與發布），循序漸進完成實作流程。
+        </p>
+      </div>
+
+      <div class="map-showcase">
+        <div class="map-poster-box" data-lightbox-index="8">
+          <img src="IMG_8869.jpeg" alt="零程式基礎，手把手實作！你的 AI Agent 學習之旅視覺指南" />
+          <div class="map-poster-caption">
+            <span>課堂手繪學習地圖（點擊可放大檢視）</span>
+            <span>2026.11.18</span>
+          </div>
+        </div>
+
+        <div class="map-details">
+          <div class="prep-box">
+            <h3>行前準備與課前需求</h3>
+            <ul class="prep-list">
+              <li>• <strong>零程式基礎即可參加：</strong>具備想法並願意動手嘗試，無須任何程式撰寫經驗。</li>
+              <li>• <strong>自備筆記型電腦與充電器：</strong>攜帶個人 Windows 或 Mac 筆電至現場同步操作。</li>
+              <li>• <strong>準備個人小主題與素材：</strong>預先準備文字與照片檔案，亦可使用課堂提供之範例練習。</li>
+            </ul>
+          </div>
+
+          <div class="steps-timeline">
+            <div class="step-item">
+              <div class="step-num">1</div>
+              <div class="step-body">
+                <h4>安裝與設定本機 AI Agent</h4>
+                <p>於個人筆電完成工具部署，並藉由課堂整理的兩張核心比較圖（能力優缺點比較、月費與生態系比較），選擇合適的主力工具。</p>
+                <div class="step-tags">
+                  <span class="step-tag">Claude Code</span>
+                  <span class="step-tag">ChatGPT / Codex</span>
+                  <span class="step-tag">Google Antigravity</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="step-item">
+              <div class="step-num">2</div>
+              <div class="step-body">
+                <h4>開始與切換任務前，確認工作資料夾位置</h4>
+                <p>建立良好的專案管理習慣：每當開啟新作品或新對話時，先建立專屬資料夾並執行「工作資料夾確認指令」，確保素材與成品路徑清晰，避免沿用舊路徑或散落桌面。</p>
+                <div class="step-tags">
+                  <span class="step-tag">└── 想要素材.txt</span>
+                  <span class="step-tag">└── 照片/</span>
+                  <span class="step-tag">└── index.html</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="step-item">
+              <div class="step-num">3</div>
+              <div class="step-body">
+                <h4>指導 AI 創建與修改網頁</h4>
+                <p>練習交代任務指令，由 AI 讀取資料夾內的文字與照片素材建立網頁檔案，再依據預覽畫面逐步調整版面結構與視覺風格。</p>
+              </div>
+            </div>
+
+            <div class="step-item">
+              <div class="step-num">4</div>
+              <div class="step-body">
+                <h4>串接 GitHub 版本控制與雲端同步</h4>
+                <p>將本機專案連結至 GitHub 進行版本控制，並安裝 Google 雲端硬碟同步照片與文字素材，便於日後持續維護與跨裝置存取。</p>
+              </div>
+            </div>
+
+            <div class="step-item">
+              <div class="step-num">5</div>
+              <div class="step-body">
+                <h4>作品發布與日常延伸應用</h4>
+                <p>透過線上預覽與發布功能，將完成的靜態網頁轉化為可公開瀏覽的網址，靈活應用於各類生活紀錄與知識整理。</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 3: Practical Daily Applications -->
+    <section class="section" style="padding-top: 1rem;">
+      <div class="section-header">
+        <span class="section-eyebrow">03 / Practical Applications</span>
+        <h2 class="section-title">AI Agent 於日常生活中的延伸應用</h2>
+        <p class="section-desc">
+          掌握「資料夾結構管理」與「明確指令溝通」兩項基礎後，同學們即可將課堂所學延伸至多種日常情境：
+        </p>
+      </div>
+
+      <div class="life-grid">
+        <div class="life-card">
+          <span class="life-tag">影像與活動歸檔</span>
+          <h3>旅遊相簿與聚會紀錄網頁</h3>
+          <p>將旅途或聚會照片彙整於資料夾，由 AI 讀取影像時間與主題內容，自動編排為圖文並茂、支援燈箱檢視的典藏網頁。</p>
+        </div>
+        <div class="life-card">
+          <span class="life-tag">知識管理與寫作</span>
+          <h3>閱讀筆記與專題彙整</h3>
+          <p>將平日記錄於純文字檔（`.txt`）的讀書心得或課程重點，交由 Agent 梳理脈絡、提煉摘要並製作成結構清晰的閱讀專頁。</p>
+        </div>
+        <div class="life-card">
+          <span class="life-tag">數位資產整理</span>
+          <h3>本機檔案與雲端同步管理</h3>
+          <p>運用課堂傳授的「五步驟位置確認法」，請 Agent 協助檢視目錄結構、批次整理檔案命名，並同步備份至 Google 雲端與 GitHub。</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 4: Chronological Photo Story Gallery -->
+    <section id="gallery" class="section">
+      <div class="section-header">
+        <span class="section-eyebrow">04 / Workshop Chronicle</span>
+        <h2 class="section-title">11.18 讀書會現場實作紀實</h2>
+        <p class="section-desc">
+          依現場拍攝時間順序（18:29 課程講解與同步實作 ➔ 21:00 課後合影），詳實記錄課堂上的教學內容與實作細節。點擊任一照片可開啟全螢幕檢視（支援鍵盤 `←` `→` 與 `Esc`）。
+        </p>
+      </div>
+
+      <!-- Chapter 1: 18:29 - 18:30 Workshop in Action -->
+      <div class="chapter-block">
+        <div class="chapter-head">
+          <div class="chapter-title-wrap">
+            <span class="chapter-number">PART 01</span>
+            <h3 class="chapter-title">核心方法講解與隨堂實作</h3>
+          </div>
+          <span class="chapter-time">2026.11.18 ｜ 18:29 – 18:30</span>
+        </div>
+
+        <div class="photo-grid">
+          <!-- BALANCED SPEAKER SPOTLIGHT 1: IMG_8853 (Span-6 side-by-side) -->
+          <article class="photo-card span-6 featured-instructor">
+            <div class="photo-frame" data-lightbox-index="0">
+              <span class="photo-badge-spotlight">益暉講解特寫 I</span>
+              <img src="IMG_8853.jpeg" alt="益暉於投影幕前講解 AI 實作教室與資料夾結構" />
+              <span class="photo-time-pill">18:29:36</span>
+            </div>
+            <div class="photo-caption-box">
+              <span class="photo-kicker">Project Structure &amp; Environment</span>
+              <h4 class="photo-heading">專案目錄架構解析：建立專屬的工作資料夾</h4>
+              <p class="photo-desc">
+                益暉於投影布幕前說明《AI 實作教室》教材中的標準目錄結構：在「我的旅遊網頁」主資料夾下，分別配置 `想要素材.txt`、`照片` 資料夾與最終生成的 `index.html`。席間同學們開啟個人筆電（前景螢幕正顯示 Claude 介面），對照教材逐步建立本機工作環境。
+              </p>
+              <div class="photo-note">
+                教材要點：將文字素材與圖片統一收納於專屬資料夾，能協助 AI Agent 準確定位並讀取所需檔案。
+              </div>
+            </div>
+          </article>
+
+          <!-- BALANCED SPEAKER SPOTLIGHT 2: IMG_8858 (Span-6 side-by-side) -->
+          <article class="photo-card span-6 featured-instructor">
+            <div class="photo-frame" data-lightbox-index="1">
+              <span class="photo-badge-spotlight">益暉講解特寫 II</span>
+              <img src="IMG_8858.jpeg" alt="益暉講解每次開始與切換任務都確認位置的操作守則" />
+              <span class="photo-time-pill">18:30:13</span>
+            </div>
+            <div class="photo-caption-box">
+              <span class="photo-kicker">Operational Guideline #3</span>
+              <h4 class="photo-heading">操作守則第三條：每次開始與切換任務皆先確認位置</h4>
+              <p class="photo-desc">
+                投影畫面展示《AI 實作教室》七大導覽列與「③ 每次開始、切換任務，都確認位置」單元。益暉詳細說明開始任務前的五項檢查步驟：回報目前完整路徑、列出第一層檔案與資料夾、確認預定寫入位置、引導切換目錄，以及遇到「找不到檔案」或「沒有權限」時的排解流程。
+              </p>
+              <div class="photo-note">
+                實用設計：教材右下角設有「複製工作資料夾確認指令 ↗」按鈕，方便同學一鍵複製指令向 Agent 核對路徑。
+              </div>
+            </div>
+          </article>
+
+          <!-- THREE COMPACT HANDS-ON CARDS ROW (Span 4 each) -->
+          <!-- Small Card 1: IMG_8854 -->
+          <article class="photo-card span-4 compact-card">
+            <div class="photo-frame" data-lightbox-index="2">
+              <img src="IMG_8854.jpeg" alt="三位同學專注凝視投影布幕聆聽操作步驟" />
+              <span class="photo-time-pill">18:29:43</span>
+            </div>
+            <div class="photo-caption-box">
+              <span class="photo-kicker">Focused Observation</span>
+              <h4 class="photo-heading">專注聆聽位置確認與權限排解步驟</h4>
+              <p class="photo-desc">
+                三位同學凝視投影布幕上的五步驟檢查清單，仔細理解如何在開啟新對話串或切換作品時，避免 AI 沿用前一個專案的目錄位置。
+              </p>
+            </div>
+          </article>
+
+          <!-- Small Card 2: IMG_8857 -->
+          <article class="photo-card span-4 compact-card">
+            <div class="photo-frame" data-lightbox-index="3">
+              <img src="IMG_8857.jpeg" alt="同學於筆電鍵盤上同步輸入指令實作" />
+              <span class="photo-time-pill">18:30:00</span>
+            </div>
+            <div class="photo-caption-box">
+              <span class="photo-kicker">Hands-on Execution</span>
+              <h4 class="photo-heading">隨堂實作：輸入指令與驗證本機路徑</h4>
+              <p class="photo-desc">
+                理解目錄管理原則後，同學立即於筆電鍵盤輸入指令測試，身旁同學亦同步核對投影幕步驟與個人螢幕畫面，確認環境設定無誤。
+              </p>
+            </div>
+          </article>
+
+          <!-- Small Card 3: IMG_8856 -->
+          <article class="photo-card span-4 compact-card">
+            <div class="photo-frame" data-lightbox-index="4">
+              <img src="IMG_8856.jpeg" alt="同學檢視筆電上的 AI 實作教室教材與工具比較圖" />
+              <span class="photo-time-pill">18:29:55</span>
+            </div>
+            <div class="photo-caption-box">
+              <span class="photo-kicker">Tool Evaluation</span>
+              <h4 class="photo-heading">研讀教材：三大 AI Agent 工具比較圖</h4>
+              <p class="photo-desc">
+                同學筆電畫面正開啟《AI 實作教室》之「選工具前，先看兩張比較圖」章節，對照 Claude Code、Codex 與 Google Antigravity 的功能特性與費用方案。
+              </p>
+            </div>
+          </article>
+        </div>
+      </div>
+
+      <!-- Chapter 2: 20:59 - 21:00 Group Photos (Bold Headings Only, No Sub-text) -->
+      <div id="group" class="chapter-block">
+        <div class="chapter-head">
+          <div class="chapter-title-wrap">
+            <span class="chapter-number">PART 02</span>
+            <h3 class="chapter-title">圓滿完成實作：課後歡聚留影</h3>
+          </div>
+          <span class="chapter-time">2026.11.18 ｜ 20:59 – 21:00</span>
+        </div>
+
+        <div class="photo-grid">
+          <!-- Photo 6: IMG_8860 -->
+          <article class="photo-card span-12">
+            <div class="photo-frame" data-lightbox-index="5">
+              <img src="IMG_8860.jpeg" alt="讀書會同學們課後正式大合照" />
+              <span class="photo-time-pill">20:59:29</span>
+            </div>
+            <div class="photo-caption-box">
+              <span class="photo-kicker">Group Portrait I</span>
+              <h4 class="photo-heading">讀書會同學們齊聚一堂：解鎖 AI Agent 新技能的成就感！</h4>
+            </div>
+          </article>
+
+          <!-- Photo 7: IMG_8863 -->
+          <article class="photo-card span-7">
+            <div class="photo-frame" data-lightbox-index="6">
+              <img src="IMG_8863.jpeg" alt="讀書會同學們圍聚木桌旁溫馨合影" />
+              <span class="photo-time-pill">21:00:05</span>
+            </div>
+            <div class="photo-caption-box">
+              <span class="photo-kicker">Group Portrait II</span>
+              <h4 class="photo-heading">「何不一起美好」——因為一起學習，所以更有趣！</h4>
+            </div>
+          </article>
+
+          <!-- Photo 8: IMG_8864 -->
+          <article class="photo-card span-5">
+            <div class="photo-frame" data-lightbox-index="7">
+              <img src="IMG_8864.jpeg" alt="近距離自拍視角大合照" />
+              <span class="photo-time-pill">21:00:33</span>
+            </div>
+            <div class="photo-caption-box">
+              <span class="photo-kicker">Group Portrait III</span>
+              <h4 class="photo-heading">21:00 壓軸自拍：把今晚的充實收穫與笑容帶回家</h4>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 5: Refined Gratitude & Appreciation Banner -->
+    <section id="gratitude" class="gratitude-section">
+      <div class="gratitude-card">
+        <span class="gratitude-eyebrow">Heartfelt Appreciation ・ 誠摯致謝</span>
+        <h2 class="gratitude-title">謝謝益暉無私教導 ✕ 感謝各位同學的熱情參與和認真學習</h2>
+        <p class="gratitude-message">
+          特別<strong>謝謝益暉無私地教導大家學習 AI Agent 這項實用新技能</strong>，從課前悉心編撰《AI 實作教室》線上教材與學習地圖，到現場條理分明地示範每個操作步驟，協助大家建立清楚的資料夾管理與指令溝通觀念。<br />
+          同時也誠摯感謝每一位在週三夜晚攜帶筆電前來參與的同學。從開場專注聆聽、隨堂動手實作到課堂間的彼此交流，因為有益暉的傾囊相授與同學們的<strong>熱情參與和認真學習</strong>，讓這場讀書會充實而圓滿。期盼大家都能將今晚所學的 AI Agent 方法靈活運用於日常生活之中。
+        </p>
+        <div class="gratitude-pills">
+          <span class="gratitude-pill">謝謝益暉無私教導 AI Agent 新技能</span>
+          <span class="gratitude-pill">感謝各位同學熱情參與認真學習</span>
+          <span class="gratitude-pill">11.18 何不一起美好讀書會圓滿成功</span>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Interactive 3-Dimension Guide Modal -->
+  <div id="guideModal" class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <div class="modal-card">
+      <button type="button" id="modalCloseBtn" class="modal-close" aria-label="關閉導覽視窗">✕</button>
+      <div class="modal-tabs" id="modalTabs">
+        <button type="button" class="modal-tab active" data-guide="origin">📜 課程緣起與實作心法</button>
+        <button type="button" class="modal-tab" data-guide="venue">💻 數位環境與學習動線</button>
+        <button type="button" class="modal-tab" data-guide="atmosphere">🤝 課堂交流與研習氛圍</button>
+      </div>
+      <h3 id="modalTitle" class="modal-title">課程緣起與實作心法</h3>
+      <div id="modalChips" class="modal-chips"></div>
+      <div id="modalBody" class="modal-body"></div>
+    </div>
+  </div>
+
+  <!-- Full-Screen Lightbox -->
+  <div id="lightbox" class="lightbox" role="dialog" aria-modal="true" aria-label="照片放大檢視燈箱">
+    <button type="button" id="lightboxClose" class="lightbox-close" aria-label="關閉燈箱">✕</button>
+    <button type="button" id="lightboxPrev" class="lightbox-nav prev" aria-label="上一張照片">←</button>
+    <div class="lightbox-img-wrap">
+      <img id="lightboxImg" src="" alt="" />
+    </div>
+    <button type="button" id="lightboxNext" class="lightbox-nav next" aria-label="下一張照片">→</button>
+    <div class="lightbox-caption">
+      <h4 id="lightboxTitle"></h4>
+      <p id="lightboxDesc"></p>
+    </div>
+  </div>
+
+  <footer>
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <h3>11.18 何不一起美好讀書會｜AI Agent 實作研習紀錄</h3>
+        <p>謝謝益暉無私教導 AI Agent 新技能，並誠摯感謝各位同學熱情參與、認真學習。</p>
+      </div>
+      <div class="footer-meta">
+        <div>活動日期：2026 年 11 月 18 日（週三）18:30 – 21:00</div>
+        <div>何不一起美好讀書會典藏紀錄</div>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // --- 1. Interactive 3-Dimension Guide Data (Concise, Detailed, Elegant) ---
+    const GUIDE_DATA = {
+      origin: {
+        title: "📜 課程緣起與實作心法｜從觀念建立到動手實踐",
+        chips: ["何不一起美好讀書會", "2026.11.18 晚間研習", "工作資料夾管理守則"],
+        paragraphs: [
+          "隨著生成式 AI 工具發展至本機端 AI Agent（智慧代理）階段，使用者已能讓 AI 直接理解並處理個人電腦中的檔案。為了協助沒有程式背景的同學順利掌握這項工具，讀書會於 2026 年 11 月 18 日晚間舉辦了本次實作研習。",
+          "益暉特別針對初學者設計了《AI 實作教室》線上教材，將學習流程拆解為安裝部署、工具比較、位置確認、指令實作與雲端發布。其中最核心的實務原則為「每次開始或切換任務前，皆先確認工作資料夾位置」，確保文字素材、照片與生成的網頁檔案井然有序。"
+        ]
+      },
+      venue: {
+        title: "💻 數位環境與學習動線｜跨平台筆電同步操作",
+        chips: ["投影教材同步示範", "Windows ✕ Mac 雙平台", "即時預覽與驗證"],
+        paragraphs: [
+          "現場透過清晰的投影畫面展示《AI 實作教室》網頁教材與指令小抄，同學們各自使用攜帶的 Windows 或 MacBook 筆電同步操作。",
+          "教材中內建了「複製工作資料夾確認指令」等互動按鈕，讓同學能直接複製標準指令並貼入 Claude Code、Codex 或 Antigravity 介面中測試，抬頭即可核對投影幕上的示範結果，學習動線流暢且高效率。"
+        ]
+      },
+      atmosphere: {
+        title: "🤝 課堂交流與研習氛圍｜專注實作與茶點相伴的夜晚",
+        chips: ["手把手步驟拆解", "茶點相伴輕鬆研習", "彼此交流切磋"],
+        paragraphs: [
+          "兩個半小時的晚間課程裡，長桌上備有茶飲與蜂蜜蛋糕點心，讓同學們在舒適從容的步調中吸收新知。",
+          "課堂間，大家一方面專注聆聽益暉講解目錄結構與權限排解方法，一方面實際動手輸入指令；遇到操作疑問時也能即時與益暉或鄰座同學討論確認，在互助切磋中順利完成各自的練習。"
+        ]
+      }
+    };
+
+    const guideModal = document.getElementById("guideModal");
+    const modalTitle = document.getElementById("modalTitle");
+    const modalChips = document.getElementById("modalChips");
+    const modalBody = document.getElementById("modalBody");
+    const modalTabs = document.querySelectorAll(".modal-tab");
+
+    function openGuideModal(key) {
+      const data = GUIDE_DATA[key] || GUIDE_DATA.origin;
+      modalTitle.textContent = data.title;
+      modalChips.innerHTML = data.chips.map(c => `<span class="modal-chip">${c}</span>`).join("");
+      modalBody.innerHTML = data.paragraphs.map(p => `<p>${p}</p>`).join("");
+      modalTabs.forEach(t => t.classList.toggle("active", t.dataset.guide === key));
+      guideModal.classList.add("open");
+    }
+
+    document.querySelectorAll(".guide-pill").forEach(btn => {
+      btn.addEventListener("click", () => openGuideModal(btn.dataset.guide));
+    });
+
+    modalTabs.forEach(tab => {
+      tab.addEventListener("click", () => openGuideModal(tab.dataset.guide));
+    });
+
+    document.getElementById("modalCloseBtn").addEventListener("click", () => {
+      guideModal.classList.remove("open");
+    });
+
+    guideModal.addEventListener("click", (e) => {
+      if (e.target === guideModal) guideModal.classList.remove("open");
+    });
+
+    // --- 2. Gallery Mode Toggle (圖文雅覽 / 純圖畫廊) ---
+    const modeToggleBtn = document.getElementById("modeToggleBtn");
+    const modeToggleLabel = document.getElementById("modeToggleLabel");
+    modeToggleBtn.addEventListener("click", () => {
+      const isPure = document.body.classList.toggle("pure-gallery-mode");
+      modeToggleBtn.classList.toggle("active", isPure);
+      modeToggleLabel.textContent = isPure ? "純圖畫廊" : "圖文雅覽";
+    });
+
+    // --- 3. Fullscreen Lightbox ---
+    const LIGHTBOX_ITEMS = [
+      {
+        src: "IMG_8853.jpeg",
+        title: "18:29｜益暉講解專案目錄架構",
+        desc: "益暉於投影幕前說明《AI 實作教室》中的資料夾結構（想要素材.txt、照片、index.html），同學們開啟筆電同步跟隨。"
+      },
+      {
+        src: "IMG_8858.jpeg",
+        title: "18:30｜操作守則第三條：每次開始與切換任務皆先確認位置",
+        desc: "詳細解說開始任務前的五項檢查步驟與權限排解方式，並透過教材按鈕一鍵複製工作資料夾確認指令。"
+      },
+      {
+        src: "IMG_8854.jpeg",
+        title: "18:29｜專注聆聽位置確認步驟",
+        desc: "三位同學凝視投影布幕上的五步驟檢查清單，理解如何避免 AI 沿用舊專案路徑。"
+      },
+      {
+        src: "IMG_8857.jpeg",
+        title: "18:30｜隨堂實作：輸入指令與驗證路徑",
+        desc: "同學於筆電鍵盤實際輸入指令操作，並與鄰座同學同步核對投影幕上的教學步驟。"
+      },
+      {
+        src: "IMG_8856.jpeg",
+        title: "18:29｜研讀三大 AI Agent 工具比較圖",
+        desc: "筆電畫面顯示《AI 實作教室》教材中的兩張核心比較圖，對照 Claude Code、Codex 與 Antigravity 的能力特性與費用生態。"
+      },
+      {
+        src: "IMG_8860.jpeg",
+        title: "20:59｜讀書會同學們齊聚一堂：解鎖 AI Agent 新技能的成就感！",
+        desc: ""
+      },
+      {
+        src: "IMG_8863.jpeg",
+        title: "21:00｜「何不一起美好」——因為一起學習，所以更有趣！",
+        desc: ""
+      },
+      {
+        src: "IMG_8864.jpeg",
+        title: "21:00｜壓軸自拍：把今晚的充實收穫與笑容帶回家",
+        desc: ""
+      },
+      {
+        src: "IMG_8869.jpeg",
+        title: "課程視覺指南｜零程式基礎，手把手實作！你的 AI Agent 學習之旅",
+        desc: "涵蓋行前準備三項守則與五大核心實作學習地圖（部署 Agent、創建修改網頁、串接 GitHub 與雲端同步）。"
+      }
+    ];
+
+    let currentLightboxIdx = 0;
+    const lightbox = document.getElementById("lightbox");
+    const lightboxImg = document.getElementById("lightboxImg");
+    const lightboxTitle = document.getElementById("lightboxTitle");
+    const lightboxDesc = document.getElementById("lightboxDesc");
+
+    function showLightbox(idx) {
+      currentLightboxIdx = (idx + LIGHTBOX_ITEMS.length) % LIGHTBOX_ITEMS.length;
+      const item = LIGHTBOX_ITEMS[currentLightboxIdx];
+      lightboxImg.src = item.src;
+      lightboxImg.alt = item.title;
+      lightboxTitle.textContent = item.title;
+      lightboxDesc.textContent = item.desc;
+      lightbox.classList.add("open");
+    }
+
+    document.querySelectorAll("[data-lightbox-index]").forEach(el => {
+      el.addEventListener("click", () => {
+        showLightbox(parseInt(el.dataset.lightboxIndex, 10));
+      });
+    });
+
+    document.getElementById("lightboxClose").addEventListener("click", () => lightbox.classList.remove("open"));
+    document.getElementById("lightboxPrev").addEventListener("click", () => showLightbox(currentLightboxIdx - 1));
+    document.getElementById("lightboxNext").addEventListener("click", () => showLightbox(currentLightboxIdx + 1));
+
+    lightbox.addEventListener("click", (e) => {
+      if (e.target === lightbox) lightbox.classList.remove("open");
+    });
+
+    window.addEventListener("keydown", (e) => {
+      if (lightbox.classList.contains("open")) {
+        if (e.key === "Escape") lightbox.classList.remove("open");
+        if (e.key === "ArrowLeft") showLightbox(currentLightboxIdx - 1);
+        if (e.key === "ArrowRight") showLightbox(currentLightboxIdx + 1);
+      } else if (guideModal.classList.contains("open") && e.key === "Escape") {
+        guideModal.classList.remove("open");
+      }
+    });
+
+    // --- 4. Top-Right French Chanson & Parisian Salon Music Control ---
+    const TRACK_LIST = [
+      {
+        title: "薩蒂・巴黎香頌圓舞曲",
+        type: "chanson_waltz"
+      },
+      {
+        title: "1925 巴黎原版香頌錄音",
+        type: "mp3",
+        urls: [
+          "https://upload.wikimedia.org/wikipedia/commons/transcoded/a/a6/Je_te_Veux.ogg/Je_te_Veux.ogg.mp3",
+          "https://upload.wikimedia.org/wikipedia/commons/a/a6/Je_te_Veux.ogg"
+        ]
+      },
+      {
+        title: "佛瑞・法式大提琴與鋼琴",
+        type: "mp3",
+        urls: [
+          "https://upload.wikimedia.org/wikipedia/commons/transcoded/c/c5/Faure_-_Elegie.ogg/Faure_-_Elegie.ogg.mp3",
+          "https://upload.wikimedia.org/wikipedia/commons/c/c5/Faure_-_Elegie.ogg"
+        ]
+      },
+      {
+        title: "薩蒂・左岸靜謐鋼琴",
+        type: "mp3",
+        urls: [
+          "https://upload.wikimedia.org/wikipedia/commons/transcoded/e/e8/Gymnopedie_No._1..ogg/Gymnopedie_No._1..ogg.mp3",
+          "https://upload.wikimedia.org/wikipedia/commons/e/e8/Gymnopedie_No._1..ogg"
+        ]
+      }
+    ];
+
+    class ParisianChansonWaltzEngine {
+      constructor() {
+        this.ctx = null;
+        this.master = null;
+        this.isPlaying = false;
+        this.timer = null;
+        this.beatIdx = 0;
+
+        const N = {
+          C3: 130.81, D3: 146.83, E3: 164.81, F3: 174.61, Fs3: 185.00, G3: 196.00, A3: 220.00, B3: 246.94,
+          C4: 261.63, D4: 293.66, E4: 329.63, F4: 349.23, Fs4: 369.99, G4: 392.00, Gs4: 415.30, A4: 440.00, B4: 493.88,
+          C5: 523.25, D5: 587.33, E5: 659.25, F5: 698.46, Fs5: 739.99, G5: 783.99, A5: 880.00
+        };
+
+        this.waltzBars = [
+          { bass: N.C3, chord: [N.E4, N.G4, N.C5], mel: [N.G4, N.E5, N.D5], dur: [0.45, 0.9, 0.45] },
+          { bass: N.G3, chord: [N.E4, N.G4, N.C5], mel: [N.C5, N.B4, N.C5], dur: [0.9, 0.45, 0.45] },
+          { bass: N.D3, chord: [N.F4, N.A4, N.D5], mel: [N.A4, 0, N.F5],    dur: [0.95, 0, 0.45] },
+          { bass: N.G3, chord: [N.F4, N.G4, N.B4], mel: [N.D5, 0, 0],       dur: [1.35, 0, 0] },
+
+          { bass: N.G3, chord: [N.F4, N.G4, N.B4], mel: [N.G4, N.F5, N.E5], dur: [0.45, 0.9, 0.45] },
+          { bass: N.D3, chord: [N.F4, N.G4, N.B4], mel: [N.D5, N.C5, N.D5], dur: [0.9, 0.45, 0.45] },
+          { bass: N.C3, chord: [N.E4, N.G4, N.C5], mel: [N.E5, 0, N.C5],    dur: [0.95, 0, 0.45] },
+          { bass: N.G3, chord: [N.E4, N.G4, N.B4], mel: [N.G4, 0, 0],       dur: [1.35, 0, 0] },
+
+          { bass: N.A3, chord: [N.E4, N.A4, N.C5], mel: [N.A4, N.E5, N.D5], dur: [0.45, 0.9, 0.45] },
+          { bass: N.E3, chord: [N.E4, N.Gs4, N.B4],mel: [N.C5, N.B4, N.A4], dur: [0.45, 0.45, 0.45] },
+          { bass: N.F3, chord: [N.F4, N.A4, N.C5], mel: [N.D5, 0, N.C5],    dur: [0.95, 0, 0.45] },
+          { bass: N.D3, chord: [N.Fs4, N.A4, N.C5],mel: [N.B4, N.A4, 0],    dur: [0.9, 0.5, 0] },
+
+          { bass: N.G3, chord: [N.E4, N.G4, N.C5], mel: [N.G5, 0, N.E5],    dur: [0.95, 0, 0.45] },
+          { bass: N.G3, chord: [N.F4, N.A4, N.B4], mel: [N.D5, N.C5, N.B4], dur: [0.45, 0.45, 0.45] },
+          { bass: N.C3, chord: [N.E4, N.G4, N.C5], mel: [N.C5, 0, 0],       dur: [1.4, 0, 0] },
+          { bass: N.G3, chord: [N.E4, N.G4, N.B4], mel: [0, 0, 0],          dur: [0, 0, 0] }
+        ];
+      }
+
+      init() {
+        if (!this.ctx) {
+          const AudioCtx = window.AudioContext || window.webkitAudioContext;
+          this.ctx = new AudioCtx();
+          this.master = this.ctx.createGain();
+          this.master.gain.value = 0.72;
+          this.master.connect(this.ctx.destination);
+        }
+        if (this.ctx.state === "suspended") this.ctx.resume();
+      }
+
+      playSalonPiano(freq, durationSec, vol = 0.045) {
+        if (!this.ctx || !freq) return;
+        const now = this.ctx.currentTime;
+        const osc = this.ctx.createOscillator();
+        const filter = this.ctx.createBiquadFilter();
+        const gain = this.ctx.createGain();
+
+        osc.type = "triangle";
+        osc.frequency.setValueAtTime(freq, now);
+
+        filter.type = "lowpass";
+        filter.frequency.setValueAtTime(1150, now);
+        filter.frequency.exponentialRampToValueAtTime(380, now + durationSec);
+
+        gain.gain.setValueAtTime(0.0001, now);
+        gain.gain.linearRampToValueAtTime(vol, now + 0.035);
+        gain.gain.exponentialRampToValueAtTime(0.0001, now + durationSec + 0.25);
+
+        osc.connect(filter);
+        filter.connect(gain);
+        gain.connect(this.master);
+
+        osc.start(now);
+        osc.stop(now + durationSec + 0.3);
+      }
+
+      playChansonLead(freq, durationSec, vol = 0.038) {
+        if (!this.ctx || !freq || durationSec <= 0) return;
+        const now = this.ctx.currentTime;
+        const osc1 = this.ctx.createOscillator();
+        const osc2 = this.ctx.createOscillator();
+        const filter = this.ctx.createBiquadFilter();
+        const gain = this.ctx.createGain();
+
+        osc1.type = "triangle";
+        osc2.type = "sine";
+        osc1.frequency.setValueAtTime(freq, now);
+        osc2.frequency.setValueAtTime(freq + 1.2, now);
+
+        filter.type = "lowpass";
+        filter.frequency.setValueAtTime(1400, now);
+
+        gain.gain.setValueAtTime(0.0001, now);
+        gain.gain.linearRampToValueAtTime(vol, now + 0.06);
+        gain.gain.exponentialRampToValueAtTime(0.0001, now + durationSec + 0.18);
+
+        osc1.connect(filter);
+        osc2.connect(filter);
+        filter.connect(gain);
+        gain.connect(this.master);
+
+        osc1.start(now);
+        osc2.start(now);
+        osc1.stop(now + durationSec + 0.22);
+        osc2.stop(now + durationSec + 0.22);
+      }
+
+      tick() {
+        const barIdx = Math.floor(this.beatIdx / 3) % this.waltzBars.length;
+        const beatInBar = this.beatIdx % 3;
+        const bar = this.waltzBars[barIdx];
+
+        if (beatInBar === 0) {
+          this.playSalonPiano(bar.bass, 1.15, 0.062);
+        } else {
+          const chordVol = beatInBar === 1 ? 0.024 : 0.020;
+          bar.chord.forEach((f) => this.playSalonPiano(f, 0.42, chordVol));
+        }
+
+        const melFreq = bar.mel[beatInBar];
+        const melDur = bar.dur[beatInBar];
+        if (melFreq > 0 && melDur > 0) {
+          this.playChansonLead(melFreq, melDur, 0.042);
+        }
+
+        this.beatIdx++;
+      }
+
+      start() {
+        this.init();
+        if (this.isPlaying) return;
+        this.isPlaying = true;
+        this.tick();
+        this.timer = setInterval(() => this.tick(), 460);
+      }
+
+      stop() {
+        this.isPlaying = false;
+        if (this.timer) {
+          clearInterval(this.timer);
+          this.timer = null;
+        }
+      }
+    }
+
+    const audioPlayer = document.getElementById("bgAudioPlayer");
+    const navMusicBtn = document.getElementById("navMusicBtn");
+    const navMusicLabel = document.getElementById("navMusicLabel");
+    const musicTrackSelect = document.getElementById("musicTrackSelect");
+
+    const chansonWaltz = new ParisianChansonWaltzEngine();
+    let isMusicPlaying = false;
+
+    function updateMusicUI(playing) {
+      isMusicPlaying = playing;
+      navMusicBtn.classList.toggle("playing", playing);
+      navMusicLabel.textContent = playing ? "⏸ 香頌播放中" : "🎵 法國香頌";
+    }
+
+    function stopAllMusic() {
+      audioPlayer.pause();
+      chansonWaltz.stop();
+      updateMusicUI(false);
+    }
+
+    async function playSelectedTrack(idx) {
+      const track = TRACK_LIST[idx] || TRACK_LIST[0];
+      audioPlayer.pause();
+      chansonWaltz.stop();
+
+      if (track.type === "chanson_waltz") {
+        chansonWaltz.start();
+        updateMusicUI(true);
+        return;
+      }
+
+      updateMusicUI(true);
+      let loaded = false;
+      for (const url of track.urls) {
+        try {
+          audioPlayer.src = url;
+          audioPlayer.volume = 0.68;
+          await audioPlayer.play();
+          loaded = true;
+          break;
+        } catch (err) {
+          // Try next format URL
+        }
+      }
+
+      if (!loaded) {
+        chansonWaltz.start();
+        updateMusicUI(true);
+      }
+    }
+
+    function toggleMusic() {
+      if (isMusicPlaying) {
+        stopAllMusic();
+      } else {
+        playSelectedTrack(parseInt(musicTrackSelect.value, 10));
+      }
+    }
+
+    navMusicBtn.addEventListener("click", toggleMusic);
+    musicTrackSelect.addEventListener("change", (e) => {
+      playSelectedTrack(parseInt(e.target.value, 10));
+    });
+  </script>
+</body>
+</html>
